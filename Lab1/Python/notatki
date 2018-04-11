@@ -1,35 +1,12 @@
-def zad2():
-    #zadanie 2
-    import operator
-    word = ""
-    sum = 0
-    words = 0
-    count = {}
 
-    with open('norm_romeo_and_juliet.txt') as f:
-        for line in f:
-            sum += len(line)
-            words += 1
-            for s in line:
-              if s in count:
-                count[s] += 1
-              else:
-                count[s] = 1
-
-
-    sorted_x = sorted(count.items(), key=operator.itemgetter(1))
-
-    #przygotowanie struktury dla generatora z prawdopodobienstwem
-    values = [(sorted_x[i][0], sorted_x[i][1] + (sorted_x[i-1][1] if i > 0 else 0) ) for i in range(0, len(sorted_x))]
-    print(values)
-    values_max = 0
-    for i in values:
-        if i[1] > values_max:
-            values_max = i[1]
-
-    # generator z prawdopodobienstwem
-    generated = ''
-    for i in range(1000000):
-        generated += (pobierz_losowa_litere_prawdo())
-    #print(generated)
-    print(srednia_liczba_liter(generated))
+    wystapienia = dict()
+    for znak in alfabet:
+        if znak not in wystapienia:
+            wystapienia[znak] = dict()
+        for p in alfabet:
+            if p not in wystapienia[znak]:
+                wystapienia[znak][p] = dict()
+            wystapienia[znak][p] = dopasuj_regex(generuj_regex(znak, p), text)
+        wystapienia[znak] = oblicz_prawdopodobienstwa(znak, wystapienia[znak])
+    posortowany = sortuj_slownik(wystapienia['a'])
+    print('a')
