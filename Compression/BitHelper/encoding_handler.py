@@ -1,8 +1,7 @@
-from collections import Counter
-import numpy as np
 from bitarray import bitarray
-from encodedbitarchive import EncodedBitArchive
+from BitHelper.encoded_bit_archive import EncodedBitArchive
 from random import randint
+from os import path
 text = "ala ma kota a jan "
 
 def load_text(filename):
@@ -12,10 +11,10 @@ def load_text(filename):
     return text
 
 def load(filename, encoding_object):
-    encoding_object.fromFile(filename)
+    encoding_object.fromFile(path.join( 'out', filename))
 
 def save(filename, encoding_object):
-    encoding_object.toFile(filename)
+    encoding_object.toFile(path.join('out', filename))
 
 def encode(text, encoding_object):
     characters = list(text)
@@ -58,7 +57,7 @@ def check_random_letters(oryginal_text, decoded_text):
 	return all(result)
 	
 def compression_summary(len_oryginal, len_encoded, len_decoded):
-    print('Długość tekstu dekodowanego odpowiada długości zakodowanego ? {}\nrozmiar zakodowanego pliku ({}b) względem pierwotnego ({}b) {}%'.
-          format( 'tak' if len_oryginal==len_decoded else 'nie ({}b <> {}b)'.format(len_oryginal, len_decoded), len_encoded, len_oryginal , len_encoded/len_oryginal ))
+    print('Długość tekstu dekodowanego odpowiada długości zakodowanego ? {}\nwspółczynnik kompresji zakodowanego pliku ({}b) względem pierwotnego ({}b) {}%'.
+          format( 'tak' if len_oryginal==len_decoded else 'nie ({}b <> {}b)'.format(len_oryginal, len_decoded), len_encoded, len_oryginal , 1 - len_encoded/len_oryginal ))
 def decode_using_tree(encoding_object):
     pass

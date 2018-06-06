@@ -1,13 +1,7 @@
 import operator
-from collections import Counter
-from random import random
+from typing import Counter
 
-
-import sys
-sys.path.append('../BitHelper')
-
-from encodedbitarchive import EncodedBitArchive #imported from BitHelper dir
-from encoding_handler import * #imported from BitHelper dir
+from BitHelper.encoding_handler import * #imported from BitHelper dir
 from PriorityQueue import PriorityQueue
 
 test_file = '../Data/short.txt' #norm_wiki_sample
@@ -70,10 +64,10 @@ def main():
     huffman.decoding_table = decoding_map
     huffman.encoding_table = encoding_map
     encode(text, huffman)
-    huffman.toFile("data")
+    huffman.toFile("huffman")
 
     huffman_read = EncodedBitArchive()
-    huffman_read.fromFile("data")
+    huffman_read.fromFile("huffman")
     decoded_text = decode_non_fixed_length_code(huffman_read)
 
     len_oryginal = len(text)*8
@@ -82,9 +76,7 @@ def main():
 
     check_random_letters(text, decoded_text)
 
-
     compression_summary(len_oryginal, len_encoded, len_decoded)
-
 
 if __name__ == '__main__':
     main()
