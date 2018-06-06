@@ -6,7 +6,7 @@ import itertools
 
 def load_text():
     text = ''
-    with open('norm_wiki_sample.txt') as f:
+    with open('../Data/norm_wiki_sample.txt') as f:
         for line in f:
             text += line
     return text

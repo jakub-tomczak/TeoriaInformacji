@@ -79,7 +79,7 @@ def zad2():
     words = 0
     count = {}
 
-    with open('norm_romeo_and_juliet.txt') as f:
+    with open('../../Data/norm_romeo_and_juliet.txt') as f:
         for line in f:
             sum += len(line)
             words += 1

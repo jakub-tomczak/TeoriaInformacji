@@ -3,7 +3,7 @@ import pickle
 
 class Encoding:
     endian = 'big'
-    info_filename_suffix = '_info.data'
+    info_filename_suffix = '_compressed'
     def __init__(self):
         self.encoding_length = 0
         self.encoded_data_length = 0
@@ -12,16 +12,13 @@ class Encoding:
         self.data = bitarray()
 
     def fromFile(self, filename):
-        temp_array = bitarray(endian=Encoding.endian)
-        with open(filename, 'rb') as file:
-            temp_array.fromfile(file)
-            self.data = temp_array
         with open('{}{}'.format(filename, Encoding.info_filename_suffix), 'rb') as file:
             encoding_data = pickle.load(file)
         self.encoding_table = encoding_data.encoding_table
         self.decoding_table = encoding_data.decoding_table
         self.encoded_data_length = encoding_data.encoded_data_length
         self.encoding_length = encoding_data.encoding_length
+        self.data = encoding_data.data
 
     def toFile(self, filename):
         info_sum = len(self.encoding_table) + len(self.decoding_table) + 4 + 4

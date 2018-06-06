@@ -10,7 +10,7 @@ from encodedbitarchive import EncodedBitArchive #imported from BitHelper dir
 from encoding_handler import * #imported from BitHelper dir
 from PriorityQueue import PriorityQueue
 
-test_file = 'short.txt' #norm_wiki_sample
+test_file = '../Data/short.txt' #norm_wiki_sample
 
 #sorts a dict from the lowest probabilities to the highest
 def sort_dict(dictionary):

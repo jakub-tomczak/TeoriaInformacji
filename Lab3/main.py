@@ -82,7 +82,7 @@ def calculate_entropy(text):
     return (ch_results, w_results)
 import os
 if __name__=='__main__':
-    data_directory = "{}{}".format(os.getcwd(), "/data/")
+    data_directory = "{}{}".format(os.getcwd(), "/../Data/")
     files = os.listdir(data_directory)
     results_file = open('results.txt', 'w')
 

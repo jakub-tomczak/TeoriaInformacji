@@ -2,7 +2,10 @@ import pickle
 from collections import Counter
 import numpy as np
 from bitarray import bitarray
-from encoding import Encoding
+import sys
+sys.path.append('../BitHelper')
+from encodedbitarchive import EncodedBitArchive #imported from BitHelper dir
+from encoding_handler import * #imported from BitHelper dir
 
 text = "ala ma kota a jan "
 
@@ -11,12 +14,6 @@ def load_text(filename):
     with open(filename, 'r') as file:
         text = text + file.readline()
     return text
-
-def load(filename, encoding_object):
-    encoding_object.fromFile(filename)
-
-def save(filename, encoding_object):
-    encoding_object.toFile(filename)
 
 def create_encoding(text, encoding_object):
     splitted = list(text)
@@ -29,24 +26,13 @@ def create_encoding(text, encoding_object):
         #uzupelnienie 0 do poprawnej liczby znakow
         encoding_object.encoding_table[k] = '{}{}'.format('0'*(bin_length-len(encoding_object.encoding_table[k])) ,encoding_object.encoding_table[k])
         encoding_object.decoding_table[str(bitarray(encoding_object.encoding_table[k]))] = k
+
         iter += 1
 
-def encode(text, encoding_object):
-    characters = list(text)
-    encoded = [encoding_object.encoding_table[i] for i in characters]
-    encoded = ''.join(encoded)
-    encoding_object.data = bitarray(encoded, endian=Encoding.endian)
-    encoding_object.encoded_data_length = len(encoding_object.data)
-
-def decode(encoding_object):
-    return ''.join(encoding_object.decoding_table[str(encoding_object.data[i:i+encoding_object.encoding_length])] for i in range(0, encoding_object.encoded_data_length, encoding_object.encoding_length))
-
-
-
 def main():
-    encoded_obj = Encoding()
-    decoded_obj = Encoding()
-    text = load_text('norm_wiki_sample.txt')
+    encoded_obj = EncodedBitArchive()
+    decoded_obj = EncodedBitArchive()
+    #text = load_text('../Data/short.txt')
 
     print('input len {}'.format(len(text)))
 
@@ -59,6 +45,8 @@ def main():
     load('ala_ma_kota', decoded_obj)
     print('compressed len {}'.format(len(encoded_obj.data)))
     decoded_data = decode(decoded_obj)
+
+    check_random_letters(text, decoded_data)
 
     if len(text) == len(decoded_data):
         print('OK')
