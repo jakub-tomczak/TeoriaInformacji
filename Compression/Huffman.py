@@ -1,10 +1,10 @@
 import operator
 from typing import Counter
-
+import numpy as np
 from BitHelper.encoding_handler import * #imported from BitHelper dir
 from PriorityQueue import PriorityQueue
 
-test_file = '../Data/short.txt' #norm_wiki_sample
+test_file = '../Data/norm_wiki_sample.txt' #norm_wiki_sample
 
 #sorts a dict from the lowest probabilities to the highest
 def sort_dict(dictionary):
@@ -15,8 +15,8 @@ def calculate_data_probabilities(splitted_data):
         raise Exception('splitted data is None')
     words_dict = Counter(splitted_data)
     xsum = sum( words_dict.values())
-    words_dict_q = {k : v/xsum  for k,v in words_dict.items()} # char : float
-    return words_dict_q
+    words_dict = {k : v/xsum  for k,v in words_dict.items()} # char : float
+    return words_dict
 
 def create_encoding_table(root, code, mapping):
     if type(root[1]) is float and type(root[0]) is tuple:
@@ -27,7 +27,14 @@ def create_encoding_table(root, code, mapping):
     else:
         mapping[root[0]] = code
 
-def generate_encoding(sorted_probabilities):
+
+def calculate_entropy(data_dict):
+    return -np.sum([v*np.log2(v) for v in data_dict.values()])
+
+def generate_encoding(data):
+    probabilities = calculate_data_probabilities(data)
+    sorted_probabilities = sort_dict(probabilities)
+    entropy = calculate_entropy(probabilities)
     compare_index = 1
     queue = PriorityQueue(compare_index)
     #sorted_probabilities = test_data()
@@ -43,7 +50,7 @@ def generate_encoding(sorted_probabilities):
     mapping = dict()
     create_encoding_table(element, '', mapping)
     decoding_mapping = {str(bitarray(mapping)) : letter for letter, mapping in mapping.items()}
-    return mapping, decoding_mapping
+    return mapping, decoding_mapping, entropy
 
 def test_data():
     sorted_probabilities = []
@@ -57,13 +64,17 @@ def test_data():
 def main():
     text = load_text(test_file)
     #text = 'asdsad dkjas naskjd qlwke asdlkma  fnkjsdnf askdn awkjdnaks'
-    probabilities_dict = sort_dict(calculate_data_probabilities(text))
-    encoding_map,decoding_map = generate_encoding(probabilities_dict)
+    encoding_map,decoding_map, entropy = generate_encoding(text)
 
     huffman = EncodedBitArchive()
     huffman.decoding_table = decoding_map
     huffman.encoding_table = encoding_map
-    encode(text, huffman)
+    encoded_length = encode(text, huffman)
+
+
+    mean_length_encoded_words = len(huffman.data) / encoded_length
+    print('Entropia {}, średnia długość słowa kodowego {}\nEfektywność kodowania {}'.format(entropy, mean_length_encoded_words, entropy/mean_length_encoded_words))
+
     huffman.toFile("huffman")
 
     huffman_read = EncodedBitArchive()

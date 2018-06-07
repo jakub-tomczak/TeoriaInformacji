@@ -19,12 +19,15 @@ def save(filename, encoding_object):
 def encode(text, encoding_object):
     characters = list(text)
     encoded = [encoding_object.encoding_table[i] for i in characters]
+    encoded_characters = len(encoded)
     encoded = ''.join(encoded)
     encoding_object.data = bitarray(encoded, endian=EncodedBitArchive.endian)
     encoding_object.encoded_data_length = len(encoding_object.data)
+    return encoded_characters
 
 def decode(encoding_object):
     return ''.join(encoding_object.decoding_table[str(encoding_object.data[i:i+encoding_object.encoding_length])] for i in range(0, encoding_object.encoded_data_length, encoding_object.encoding_length))
+
 def decode_non_fixed_length_code(encoding_object):
     decoded = []
     i = 0
@@ -40,22 +43,19 @@ def decode_non_fixed_length_code(encoding_object):
 
     return ''.join(decoded)
 
-def decode(encoding_object):
-    return ''.join(encoding_object.decoding_table[str(encoding_object.data[i:i+encoding_object.encoding_length])] for i in range(0, encoding_object.encoded_data_length, encoding_object.encoding_length))
-
 def check_random_letters(oryginal_text, decoded_text):
-	result = []
-	if len(oryginal_text) != len(decoded_text):
-		print('Plik oryginalny ma inną długość niż zdekodowany! {}B <> {}B'.format(len(oryginal_text), len(decoded_text)))
-		return False
-	num = min(100, len(oryginal_text) // 4)
-	print('comparing {} random characters'.format(num))
-	for i in range(num):
-		rand = randint(0, len(oryginal_text))
-		print('`{}` ?==? `{}`'.format(oryginal_text[rand], decoded_text[rand]))
-		result.append(oryginal_text[rand] == decoded_text[rand])
-	return all(result)
-	
+    result = []
+    if len(oryginal_text) != len(decoded_text):
+        print('Plik oryginalny ma inną długość niż zdekodowany! {}B <> {}B'.format(len(oryginal_text), len(decoded_text)))
+        return False
+    num = min(100, len(oryginal_text) // 4)
+    print('comparing {} random characters'.format(num))
+    for i in range(num):
+        rand = randint(0, len(oryginal_text))
+        print('`{}` ?==? `{}`'.format(oryginal_text[rand], decoded_text[rand]))
+        result.append(oryginal_text[rand] == decoded_text[rand])
+    return all(result)
+
 def compression_summary(len_oryginal, len_encoded, len_decoded):
     print('Długość tekstu dekodowanego odpowiada długości zakodowanego ? {}\nwspółczynnik kompresji zakodowanego pliku ({}b) względem pierwotnego ({}b) {}%'.
           format( 'tak' if len_oryginal==len_decoded else 'nie ({}b <> {}b)'.format(len_oryginal, len_decoded), len_encoded, len_oryginal , 1 - len_encoded/len_oryginal ))

@@ -2,6 +2,9 @@ from bitarray import bitarray
 import pickle
 import sys
 
+from BitHelper import Tree
+
+
 class EncodedBitArchive:
     endian = 'big'
     info_filename_suffix = '_compressed'
@@ -10,8 +13,9 @@ class EncodedBitArchive:
         self.encoded_data_length = 0
         self.encoding_table = dict()
         self.decoding_table = dict()
-        self.deciding_tree = tree()
+        self.deciding_tree = Tree.node()
         self.data = bitarray()
+        self.entropy = 0.0
 
     def fromFile(self, filename):
         with open('{}{}'.format(filename, EncodedBitArchive.info_filename_suffix), 'rb') as file:
@@ -29,13 +33,3 @@ class EncodedBitArchive:
         print('Informacje o kodowaniu zajmują {} % zakodowanych danych'.format(info_sum/len(self.data)))
         with open('{}{}'.format(filename, EncodedBitArchive.info_filename_suffix), 'wb') as file:
             pickle.dump(self, file)
-
-class tree:
-    def __init__(self):
-        self.root = node()
-
-class node:
-    def __init__(self):
-        self.character = ''
-        self.left_node = None
-        self.right_node = None
